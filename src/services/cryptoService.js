@@ -17,7 +17,7 @@ export async function initializeQuestionDatabase() {
     }
 
     // 2. Fetch the encrypted questions file
-    const response = await fetch('/questions.enc');
+    const response = await fetch(`${import.meta.env.BASE_URL}questions.enc`);
     if (!response.ok) {
       throw new Error(`Failed to fetch encrypted questions: ${response.statusText}`);
     }
