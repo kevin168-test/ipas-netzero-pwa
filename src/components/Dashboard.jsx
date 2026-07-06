@@ -16,7 +16,7 @@ export default function Dashboard({ onStartPractice, onStartExam, onStartTagPrac
     wrongCount: 0
   });
 
-  const [countdown, setCountdown] = useState({ days: 0, hours: 0, mins: 0 });
+  const [daysRemaining, setDaysRemaining] = useState(0);
 
   // Load stats from Dexie IndexedDB
   useEffect(() => {
@@ -53,28 +53,25 @@ export default function Dashboard({ onStartPractice, onStartExam, onStartTagPrac
     loadStats();
   }, [totalWrong, totalBookmarked]);
 
-  // Exam Countdown (Default: Nov 14, 2026, standard next IPAS exam period)
+  // Exam Countdown (Target: Minguo 115/08/15 -> August 15, 2026)
   useEffect(() => {
-    const examDate = new Date('2026-11-14T09:00:00').getTime();
+    const examDate = new Date('2026-08-15T00:00:00').getTime();
     
     function updateCountdown() {
       const now = new Date().getTime();
       const diff = examDate - now;
       
       if (diff <= 0) {
-        setCountdown({ days: 0, hours: 0, mins: 0 });
+        setDaysRemaining(0);
         return;
       }
       
-      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      
-      setCountdown({ days: d, hours: h, mins: m });
+      const d = Math.ceil(diff / (1000 * 60 * 60 * 24));
+      setDaysRemaining(d);
     }
     
     updateCountdown();
-    const interval = setInterval(updateCountdown, 60000);
+    const interval = setInterval(updateCountdown, 3600000); // Update once an hour
     return () => clearInterval(interval);
   }, []);
 
@@ -126,22 +123,10 @@ export default function Dashboard({ onStartPractice, onStartExam, onStartTagPrac
 
         {/* Countdown Card */}
         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 text-center shrink-0 w-full sm:w-auto z-10 shadow-lg">
-          <p className="text-xs font-bold tracking-wider uppercase opacity-80">距離 115 年第二次鑑定考</p>
-          <div className="flex justify-center items-center gap-3 mt-3">
-            <div>
-              <span className="text-3xl font-black">{countdown.days}</span>
-              <span className="text-xxs block uppercase opacity-75 font-semibold mt-0.5">天</span>
-            </div>
-            <span className="text-xl font-bold opacity-60">:</span>
-            <div>
-              <span className="text-3xl font-black">{countdown.hours.toString().padStart(2, '0')}</span>
-              <span className="text-xxs block uppercase opacity-75 font-semibold mt-0.5">時</span>
-            </div>
-            <span className="text-xl font-bold opacity-60">:</span>
-            <div>
-              <span className="text-3xl font-black">{countdown.mins.toString().padStart(2, '0')}</span>
-              <span className="text-xxs block uppercase opacity-75 font-semibold mt-0.5">分</span>
-            </div>
+          <p className="text-xs font-bold tracking-wider uppercase opacity-80">距離 115/08/15(六) 鑑定考剩餘</p>
+          <div className="flex justify-center items-center gap-1.5 mt-3">
+            <span className="text-4xl font-black">{daysRemaining}</span>
+            <span className="text-sm font-bold opacity-90 mt-1.5">天</span>
           </div>
         </div>
 
