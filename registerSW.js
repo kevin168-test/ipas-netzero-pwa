@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/ipas-netzero-pwa/sw.js', { scope: '/ipas-netzero-pwa/' })})}
